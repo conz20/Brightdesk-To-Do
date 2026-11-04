@@ -9,6 +9,10 @@
 
 > **Visual example:** This is the proposed Brightdesk To Do experience. It is a design concept, not a screenshot of a finished application.
 
+## Shared Brightdesk design standard
+
+The planned product follows the [Brightdesk visual and interaction standard](https://github.com/connormolloy12/Brightdesk-suite/blob/main/docs/BRIGHTDESK_VISUAL_STANDARD.md) for branding, icon usage, layout, responsive behaviour and accessibility.
+
 ## Product experience
 
 Brightdesk To Do is planned as a simple local-first task manager for daily priorities, reminders and personal follow-through.
