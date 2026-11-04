@@ -1,45 +1,47 @@
-name: Brightdesk app quality checks
+name: Brightdesk To Do quality checks
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: '23 5 * * 1'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: app-quality-${{ github.workflow }}-${{ github.ref }}
+  group: todo-quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   quality:
-    name: App tests and Rust engine checks
+    name: To Do tests and Rust engine validation
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Set up Node.js 24.22.2
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
-          node-version: 24.22.2
+          node-version: "24.22.2"
           cache: npm
 
-      - name: Set up stable Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust build
-        uses: Swatinem/rust-cache@v2
+      - name: Set up pinned Rust toolchain
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
         with:
-          workspaces: |
-            rust -> rust/target
+          toolchain: 1.99.1
+          components: rustfmt, clippy
+
+      - name: Verify the Node.js runtime
+        run: npm run check:node
 
       - name: Install locked dependencies
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
       - name: Run application tests
         run: npm test
@@ -47,5 +49,13 @@ jobs:
       - name: Check Rust formatting, lint, tests and native build
         run: npm run rust:check
 
+      - name: Verify native Node-API integration
+        env:
+          BRIGHTDESK_REQUIRE_NATIVE_ENGINE: "1"
+        run: node --test tests/rust-engine.test.mjs tests/embedding-bridge.test.js
+
       - name: Verify release configuration
         run: npm run release:preflight
+
+      - name: Audit dependencies for high severity vulnerabilities
+        run: npm audit --audit-level=high
