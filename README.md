@@ -36,3 +36,26 @@ See [docs/DESIGN_BRIEF.md](docs/DESIGN_BRIEF.md) for planned screens, navigation
 ## Related project
 
 [Brightdesk Office Suite](https://github.com/connormolloy12/Brightdesk-suite)
+
+## Professional workspace examples and acceptance
+
+To Do should make the next useful action obvious. The primary example should show a realistic daily task list with due dates, priorities, a completed task and a simple task-entry flow.
+
+### Example workflow
+
+1. Add a task with a clear title and due date.
+2. Mark it as important or assign a priority.
+3. Complete a task and review the completed state.
+4. Find planned tasks or search for a specific item.
+5. Close and reopen the app to verify task retention.
+
+Keep task entry fast, typography readable and completed/overdue states distinct. Avoid turning a focused task manager into a crowded project dashboard. Reminders and notifications must not be advertised until implemented and verified.
+
+Follow the shared [Brightdesk visual and interaction standard](https://github.com/connormolloy12/Brightdesk-suite/blob/main/docs/BRIGHTDESK_VISUAL_STANDARD.md).
+
+### Acceptance checks
+
+- Create, edit, complete, search and reopen workflows behave as shown.
+- Due dates and priority indicators are understandable without colour alone.
+- Empty, populated and completed states are shown accurately.
+- Concept artwork is never presented as a screenshot of a finished build.
