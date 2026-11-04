@@ -1,58 +1,66 @@
 # Brightdesk To Do
 
-![Brightdesk To Do repository banner](assets/social-preview.svg)
+<p align="center"><img src="assets/branding/mark.svg" width="76" height="76" alt="Brightdesk mark"></p>
+<p align="center"><img src="assets/branding/icons/to-do.svg" width="112" height="112" alt="Brightdesk To Do icon"></p>
 
-![Brightdesk To Do product artwork](assets/brightdesk-product.svg)
+<p align="center"><strong>Keep personal tasks, daily priorities and plans organised.</strong></p>
 
-Manage personal task lists, reminders and daily priorities.
+<p align="center"><a href="https://raw.githubusercontent.com/connormolloy12/Brightdesk-To-Do/main/assets/previews/to-do.svg"><img src="assets/previews/to-do.svg" width="100%" alt="Brightdesk To Do design preview"></a></p>
 
-Brightdesk is an independent desktop product. This repository is the desktop edition of **Brightdesk To Do**. It uses the shared Brightdesk desktop engine and opens directly into this product, with product switching disabled.
+> **Preview note:** This artwork shows the intended visual direction. It is not a screenshot of the running software.
 
-## What this product does
+## Product
 
-Manage personal task lists, reminders and daily priorities.
+Brightdesk To Do is part of Brightdesk Office Suite. This repository contains the product-specific desktop edition and uses the shared Brightdesk engine. It opens directly into Brightdesk To Do; product switching is disabled.
 
-## Download
+## What you can do
 
-The latest desktop installers are published from this repository's verified release workflow when a release is approved.
+- Organise work in My Day, Important, Planned, Tasks and Completed views.
+- Add tasks, notes, due dates and priorities.
+- Mark tasks complete or restore them.
+- Search tasks and filter your work.
+- Keep task data stored locally on this device.
 
-| Platform | Installer |
-| --- | --- |
-| Windows | Windows x64 installer (.exe) |
-| macOS | Universal installer (.dmg), package (.pkg) and archive (.zip) |
-| Linux | x64 AppImage and Debian package (.deb) |
-
-The complete ten-product desktop suite remains available from [Brightdesk-suite](https://github.com/connormolloy12/Brightdesk-suite).
-
-## Run from source
+## Development
 
 Use Node.js **24.22.2**.
 
 ```sh
 npm ci
-npm start
+npm run check:node
+npm test
+npm run rust:check
 ```
 
-To build an installer on its native operating system:
+## Build desktop installers
+
+Run the matching command on the target operating system:
 
 ```sh
-npm run dist:product:mac
-npm run verify:product:mac
+npm run dist:win
+npm run verify:desktop:win
+
+npm run dist:mac
+npm run verify:desktop:mac
+
+npm run dist:linux
+npm run verify:desktop:linux
 ```
 
-Use `win` on Windows or `linux` on Linux instead of `mac`.
+The desktop build includes the Brightdesk Rust Node-API 8 engine. Rust formatting, Clippy, Cargo tests, native compilation and native integration tests must pass before a platform is considered verified. A JavaScript fallback keeps normal development startup available when the native module has not yet been built.
 
-## Project structure
+## Design brief
 
-- `src/` — Brightdesk desktop renderer and product modules.
-- `assets/brightdesk-product.svg` — original preview artwork for this product.
-- `scripts/` — build and release verification tools.
-- `tests/` — automated product and shared-engine tests.
+See [docs/DESIGN_BRIEF.md](docs/DESIGN_BRIEF.md) and the [shared Brightdesk visual standard](https://github.com/connormolloy12/Brightdesk-suite/blob/main/docs/BRIGHTDESK_VISUAL_STANDARD.md).
+
+## Release status
+
+Version **0.1.0** is the first-release development line. No download is advertised until the relevant platform build, checksum verification and release approval have completed.
 
 ## Related project
 
-[Brightdesk Office Suite](https://github.com/connormolloy12/Brightdesk-suite) brings all ten approved Brightdesk products together in one desktop installer.
+[Brightdesk Office Suite](https://github.com/connormolloy12/Brightdesk-suite) brings all ten approved Brightdesk products together.
 
 ## Identity and licence
 
-Brightdesk is independent and is not affiliated with Microsoft. It uses original product names, code, interface design and artwork. See [LICENSE](LICENSE), [TERMS_AND_CONDITIONS.txt](TERMS_AND_CONDITIONS.txt), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Brightdesk is independent and is not affiliated with Microsoft. The source is provided under the MIT licence, with third-party notices included in the repository.
