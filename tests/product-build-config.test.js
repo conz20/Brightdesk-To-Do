@@ -39,3 +39,19 @@ test('Rust verification checks formatting without silently rewriting source', ()
   const toolchain = fs.readFileSync(path.join(root, 'rust-toolchain.toml'), 'utf8');
   assert.match(toolchain, /channel\s*=\s*"1\.99\.1"/);
 });
+
+test('AppImage artifact naming is product-specific in both build configurations', () => {
+  assert.equal(pkg.build.appImage.artifactName, pkg.build.linux.artifactName);
+  const configPath = path.join(root, 'electron-builder.app.config.js');
+  const previousId = process.env.BRIGHTDESK_APP_ID;
+  try {
+    process.env.BRIGHTDESK_APP_ID = id;
+    delete require.cache[require.resolve(configPath)];
+    const config = require(configPath);
+    assert.equal(config.appImage.artifactName, pkg.build.appImage.artifactName);
+  } finally {
+    if (previousId === undefined) delete process.env.BRIGHTDESK_APP_ID;
+    else process.env.BRIGHTDESK_APP_ID = previousId;
+    delete require.cache[require.resolve(configPath)];
+  }
+});
