@@ -5,7 +5,9 @@
 
 <p align="center"><strong>Manage daily tasks, due dates and personal priorities.</strong></p>
 
-<p align="center"><img src="assets/previews/to-do.svg" width="100%" alt="Brightdesk To Do workspace design preview"></p>
+<p align="center"><a href="https://raw.githubusercontent.com/connormolloy12/Brightdesk-To-Do/main/assets/previews/to-do.svg"><img src="assets/previews/to-do.svg" width="100%" alt="Brightdesk To Do workspace design preview"></a></p>
+
+<p align="center"><sub>Select the preview to open the full-size artwork.</sub></p>
 
 > **Visual example:** This is the proposed Brightdesk To Do experience. It is a design concept, not a screenshot of a finished application.
 
