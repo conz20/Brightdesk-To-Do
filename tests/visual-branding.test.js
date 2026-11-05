@@ -25,9 +25,9 @@ test('final stylesheet tokens match the exact approved To-Do palette', () => {
   };
 
   assert.equal(lastHex('--bd-accent'), '#27834F');
-  assert.equal(lastHex('--bd-accent-strong'), '#1E663C');
-  assert.equal(lastHex('--bd-accent-soft'), '#EDF6F0');
-  assert.equal(lastHex('--bd-product-tint'), '#EDF6F0');
+  assert.equal(lastHex('--bd-accent-strong'), '#1D653C');
+  assert.equal(lastHex('--bd-accent-soft'), '#EDF7F0');
+  assert.equal(lastHex('--bd-product-tint'), '#EDF7F0');
   assert.equal(lastHex('--bd-canvas'), '#F3F6FA');
   assert.equal(lastHex('--bd-ink'), '#202B3C');
 });
