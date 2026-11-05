@@ -23,6 +23,8 @@ This repository contains the desktop source for Brightdesk To Do. Electron hosts
 
 ## Shared Brightdesk design standard
 
+The machine-readable approved design contract is maintained in [Brightdesk-suite/docs/BRIGHTDESK_DESIGN_CONTRACT.json](https://github.com/connormolloy12/Brightdesk-suite/blob/main/docs/BRIGHTDESK_DESIGN_CONTRACT.json). This product's approved accent is `#27834F` (strong: `#1D653C`; soft surface: `#EDF7F0`). The shared light canvas (`#F3F6FA`), white work surfaces, deep-navy navigation (`#14233F` to `#0D1930`), typography, borders, focus behaviour and reduced-motion treatment remain common. The product accent is used for meaningful actions and focus states; the original product icon remains the identity artwork. The shared token block in `src/styles.css` applies to Windows, macOS and Linux.
+
 The product follows the [Brightdesk visual and interaction standard](https://github.com/connormolloy12/Brightdesk-suite/blob/main/docs/BRIGHTDESK_VISUAL_STANDARD.md) for branding, icon usage, layout, responsive behaviour and accessibility.
 
 ## Cross-platform consistency
