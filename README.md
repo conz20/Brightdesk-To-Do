@@ -9,7 +9,7 @@
 
 <p align="center"><sub>Select the preview to open the full-size artwork.</sub></p>
 
-> **Concept preview:** This is original design artwork for Brightdesk To Do, not a screenshot captured from a running desktop build.
+> **Concept artwork — not a screenshot.** The preview above is original Brightdesk design artwork, not a capture from the running desktop build. A genuine screenshot will be added only after the current product window has been launched and its primary workflow checked.
 
 ## Desktop implementation
 
@@ -25,17 +25,16 @@ This repository contains the desktop source for Brightdesk To Do. Electron hosts
 
 The product follows the [Brightdesk visual and interaction standard](https://github.com/connormolloy12/Brightdesk-suite/blob/main/docs/BRIGHTDESK_VISUAL_STANDARD.md) for branding, icon usage, layout, responsive behaviour and accessibility.
 
-## Product experience
+## Current first-use workflows
 
-Brightdesk To Do is designed as a simple local-first task manager for daily priorities, reminders and personal follow-through.
+- Create tasks with a title and optional notes.
+- Edit tasks, set due dates and choose a priority.
+- Mark tasks as important or add them to My Day.
+- Complete, restore and delete tasks.
+- Use My Day, Important, Planned, Tasks and Completed views.
+- Search task titles and notes; keep task data saved on this device.
 
-## Planned capabilities
-
-- My Day, Important, Planned and Completed views.
-- Fast task entry with dates, priorities and notes.
-- Clear progress and completed states.
-- Search and sort personal tasks.
-- Keep task data on this device.
+**Not included in this first version:** Operating-system notifications, recurring reminders, shared task lists, accounts and cloud sync.
 
 ## Implementation status
 
