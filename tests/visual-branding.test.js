@@ -16,3 +16,18 @@ test('To Do follows the approved Brightdesk design contract',()=>{
  assert.ok(readme.includes('docs/BRIGHTDESK_DESIGN.md'));
  assert.ok(brief.includes('BRIGHTDESK_VISUAL_STANDARD.md')&&brief.includes('#27834F'));
 });
+
+test('final stylesheet tokens match the exact approved To-Do palette', () => {
+  const css = fs.readFileSync(path.join(root, 'src', 'design-system.css'), 'utf8');
+  const lastHex = (token) => {
+    const values = [...css.matchAll(new RegExp(token + String.raw`\s*:\s*(#[0-9a-f]{6})`, 'gi'))];
+    return values.at(-1)?.[1].toUpperCase();
+  };
+
+  assert.equal(lastHex('--bd-accent'), '#27834F');
+  assert.equal(lastHex('--bd-accent-strong'), '#1E663C');
+  assert.equal(lastHex('--bd-accent-soft'), '#EDF6F0');
+  assert.equal(lastHex('--bd-product-tint'), '#EDF6F0');
+  assert.equal(lastHex('--bd-canvas'), '#F3F6FA');
+  assert.equal(lastHex('--bd-ink'), '#202B3C');
+});
