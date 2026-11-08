@@ -80,6 +80,6 @@ The root README is maintained alongside the product, not as an end-of-project ta
 
 ## Individual product window
 
-When opened by itself, Brightdesk To Do opens directly into its task workspace. The Suite's product-management sidebar and generic welcome banner are removed from this window. Task views remain in the compact task-navigation area, with search, task creation, due dates and the active task list in the main workspace. Local-save status remains visible.
+When opened by itself, Brightdesk To Do opens directly into its task workspace. The Suite's generic product-management view and welcome banner are removed from this window; the product's own left navigation remains available, with an optional compact icon rail and accessible labels. Task views remain in the compact task-navigation area, with search, task creation, due dates and the active task list in the main workspace. Local-save status remains visible.
 
 The interface preview is design artwork showing the intended task-list orientation; it is not a screenshot from a verified running build.
