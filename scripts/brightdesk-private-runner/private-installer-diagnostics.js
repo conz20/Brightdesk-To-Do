@@ -15,7 +15,7 @@ const STAGES = new Set([
   'installer installation smoke test'
 ]);
 const WINDOWS_MESSAGES = [
-  'The Windows installer did not install Brightdesk.exe.',
+  'The Windows installer did not install the product executable.',
   'The installed Windows application did not launch its version check.',
   'The installed Windows application did not complete its startup check.',
   'The Windows installer did not create its uninstaller.'
