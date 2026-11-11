@@ -117,8 +117,11 @@ case "$PLATFORM" in
       exit 2
     fi
     TEMP_ROOT="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
-    MOUNT_DIR="$TEMP_ROOT/brightdesk-dmg-mount-$"
-    DMG_APP="$TEMP_ROOT/brightdesk-dmg-smoke-$.app"
+    TEMP_BASE="${TEMP_ROOT%/}"
+    if [[ -z "$TEMP_BASE" ]]; then TEMP_BASE="/tmp"; fi
+    WORK_DIR="$(mktemp -d "$TEMP_BASE/brightdesk-installer-smoke.XXXXXX")"
+    MOUNT_DIR="$WORK_DIR/mount"
+    DMG_APP="$WORK_DIR/$APP_BUNDLE_NAME"
     APP_PATH="/Applications/$APP_BUNDLE_NAME"
     if [[ -e "$APP_PATH" || -L "$APP_PATH" ]]; then
       echo "A Brightdesk installation already exists; refusing to overwrite or remove it." >&2
@@ -128,11 +131,6 @@ case "$PLATFORM" in
       echo "A Brightdesk installer receipt already exists; refusing to modify or forget it." >&2
       exit 3
     fi
-    if [[ -e "$MOUNT_DIR" || -L "$MOUNT_DIR" || -e "$DMG_APP" || -L "$DMG_APP" ]]; then
-      echo "A previous macOS smoke-test temporary path already exists; refusing to reuse or remove it." >&2
-      exit 3
-    fi
-
     INSTALL_ATTEMPTED=0
     mkdir "$MOUNT_DIR"
     cleanup_macos() {
@@ -141,7 +139,7 @@ case "$PLATFORM" in
         sudo rm -rf -- "$APP_PATH" >/dev/null 2>&1 || true
         sudo pkgutil --forget "$PACKAGE_ID" >/dev/null 2>&1 || true
       fi
-      rm -rf -- "$MOUNT_DIR" "$DMG_APP"
+      rm -rf -- "$WORK_DIR"
     }
     trap cleanup_macos EXIT
 
@@ -176,7 +174,7 @@ case "$PLATFORM" in
     sudo rm -rf -- "$APP_PATH"
     sudo pkgutil --forget "$PACKAGE_ID"
     INSTALL_ATTEMPTED=0
-    rm -rf -- "$MOUNT_DIR" "$DMG_APP"
+    rm -rf -- "$WORK_DIR"
     trap - EXIT
     ;;
   win)
