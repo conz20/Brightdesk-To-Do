@@ -71,7 +71,7 @@ function safeLinuxMessages(log) {
 }
 
 function safeMacMessages(log) {
-  const lines = new Set(String(log || '').split(/\\r?\\n/).map(line => line.trim()));
+  const lines = new Set(String(log || '').split(/\r?\n/).map(line => line.trim()));
   return MACOS_MESSAGES.filter(message => lines.has(message)).slice(0, 5);
 }
 
