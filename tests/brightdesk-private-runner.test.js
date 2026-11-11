@@ -518,7 +518,7 @@ test('macOS installer diagnostics expose only safe bundle and receipt messages',
       'A Brightdesk installer receipt already exists; refusing to modify or forget it.',
       '/Applications/Brightdesk Office Suite.app',
       'SECRET_SOURCE_CONTENT'
-    ].join('\\n')
+    ].join('\n')
   });
   const runner = fs.readFileSync(runnerScript, 'utf8');
 
