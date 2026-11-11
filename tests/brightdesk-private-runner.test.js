@@ -484,6 +484,8 @@ test('macOS installer smoke test derives the app bundle name and refuses to over
   const install = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'brightdesk-private-runner', 'verify-private-install.sh'), 'utf8');
   assert.match(install, /PRODUCT_NAME=.*package\.json/);
   assert.match(install, /APP_BUNDLE_NAME="\$\{PRODUCT_NAME\}\.app"/);
+  assert.match(install, /MOUNT_DIR=.*\$\$/);
+  assert.match(install, /DMG_APP=.*\$\$/);
   assert.match(install, /if \[\[ -e "\$APP_PATH" \|\| -L "\$APP_PATH" \]\]/);
   assert.match(install, /INSTALL_ATTEMPTED=0/);
   assert.match(install, /if \[\[ "\$INSTALL_ATTEMPTED" -eq 1 \]\]/);
