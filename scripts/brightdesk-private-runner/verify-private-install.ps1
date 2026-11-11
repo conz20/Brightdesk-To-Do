@@ -39,12 +39,11 @@ $installDir = Join-Path $tempRoot ("brightdesk-install-smoke-" + [guid]::NewGuid
 if (Test-Path -LiteralPath $installDir) {
   throw 'The unique Windows installer smoke-test directory unexpectedly already exists.'
 }
-New-Item -ItemType Directory -Path $installDir | Out-Null
-
 if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
   throw 'The expected Windows NSIS installer was not found.'
 }
 
+New-Item -ItemType Directory -Path $installDir | Out-Null
 try {
   Write-Output "Brightdesk Windows smoke test stage: installing $productName."
   $install = Start-Process -FilePath $installerPath -ArgumentList @('/S', "/D=$installDir") -Wait -PassThru
@@ -54,7 +53,7 @@ try {
 
   $appPath = Join-Path $installDir "$executableName.exe"
   if (-not (Test-Path -LiteralPath $appPath -PathType Leaf)) {
-    throw 'The Windows installer did not install Brightdesk.exe.'
+    throw "The Windows installer did not install $executableName.exe."
   }
   $nativeAddonPath = Join-Path $installDir 'resources\app.asar.unpacked\native\brightdesk_engine.node'
   if (-not (Test-Path -LiteralPath $nativeAddonPath -PathType Leaf)) {
