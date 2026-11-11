@@ -25,10 +25,6 @@ if ([string]::IsNullOrWhiteSpace($executableName)) {
 if ([string]::IsNullOrWhiteSpace($executableName)) {
   $executableName = $productName
 }
-$uninstallerName = [string]$package.build.nsis.uninstallerName
-if ([string]::IsNullOrWhiteSpace($uninstallerName)) {
-  $uninstallerName = "Uninstall $productName.exe"
-}
 
 $tempRoot = if ([string]::IsNullOrWhiteSpace($env:RUNNER_TEMP)) {
   [System.IO.Path]::GetTempPath()
@@ -45,7 +41,7 @@ if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
 
 New-Item -ItemType Directory -Path $installDir | Out-Null
 try {
-  Write-Output "Brightdesk Windows smoke test stage: installing $productName."
+  Write-Output 'Brightdesk Windows smoke test stage: installer execution.'
   $install = Start-Process -FilePath $installerPath -ArgumentList @('/S', "/D=$installDir") -Wait -PassThru
   if ($install.ExitCode -ne 0) {
     throw "The Windows installer exited with code $($install.ExitCode)."
@@ -53,7 +49,7 @@ try {
 
   $appPath = Join-Path $installDir "$executableName.exe"
   if (-not (Test-Path -LiteralPath $appPath -PathType Leaf)) {
-    throw "The Windows installer did not install $executableName.exe."
+    throw 'The Windows installer did not install the product executable.'
   }
   $nativeAddonPath = Join-Path $installDir 'resources\app.asar.unpacked\native\brightdesk_engine.node'
   if (-not (Test-Path -LiteralPath $nativeAddonPath -PathType Leaf)) {
@@ -89,10 +85,11 @@ try {
     }
   }
 
-  $uninstaller = Join-Path $installDir $uninstallerName
-  if (-not (Test-Path -LiteralPath $uninstaller -PathType Leaf)) {
-    throw 'The Windows installer did not create its uninstaller.'
+  $uninstallers = @(Get-ChildItem -LiteralPath $installDir -File -Filter 'Uninstall*.exe')
+  if ($uninstallers.Count -ne 1) {
+    throw 'The Windows installer did not create exactly one uninstaller.'
   }
+  $uninstaller = $uninstallers[0].FullName
 
   Write-Output 'Brightdesk Windows smoke test stage: uninstaller execution.'
   $remove = Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -PassThru
