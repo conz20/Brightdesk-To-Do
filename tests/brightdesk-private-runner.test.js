@@ -179,7 +179,7 @@ test('Suite cross-platform builds perform native install and launch smoke tests'
   assert.ok(windows.includes("$env:BRIGHTDESK_REQUIRE_NATIVE_ENGINE = '1'"));
   assert.match(install, /launch check failed with exit code 124/);
   assert.match(install, /Installed application launch check failed/);
-  assert.match(windows, /Brightdesk-Setup-/);
+  assert.match(windows, /build\\.win\\.artifactName/);
   assert.match(windows, /Uninstall Brightdesk\.exe/);
   assert.doesNotMatch(windows, /--version/);
 });
