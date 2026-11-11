@@ -474,7 +474,7 @@ test('Windows installer smoke test derives names from the checked-out product ma
   assert.match(windows, /\.Replace\('\$\{arch\}'/);
   assert.match(windows, /\.Replace\('\$\{ext\}'/);
   assert.match(windows, /build\.productName/);
-  assert.match(windows, /nsis\.uninstallerName/);
+  assert.match(windows, /Get-ChildItem -LiteralPath \$installDir -File -Filter 'Uninstall\*\.exe'/);
   assert.match(windows, /\[guid\]::NewGuid\(\)/);
   assert.doesNotMatch(windows, /Brightdesk-Setup-\$\(\$package\.version\)-x64\.exe/);
   assert.doesNotMatch(windows, /Join-Path \$env:RUNNER_TEMP 'brightdesk-install-smoke'/);
