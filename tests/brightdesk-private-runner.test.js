@@ -484,6 +484,11 @@ test('macOS installer smoke test derives the app bundle name and refuses to over
   const install = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'brightdesk-private-runner', 'verify-private-install.sh'), 'utf8');
   assert.match(install, /PRODUCT_NAME=.*package\.json/);
   assert.match(install, /APP_BUNDLE_NAME="\$\{PRODUCT_NAME\}\.app"/);
+  assert.match(install, /PACKAGE_ID=.*build\?\.appId/);
+  assert.match(install, /pkgutil --pkg-info "\$PACKAGE_ID"/);
+  assert.match(install, /pkgutil --forget "\$PACKAGE_ID"/);
+  assert.match(install, /previous macOS smoke-test temporary path already exists/);
+  assert.match(install, /mkdir "\$MOUNT_DIR"/);
   assert.match(install, /MOUNT_DIR=.*\$\$/);
   assert.match(install, /DMG_APP=.*\$\$/);
   assert.match(install, /if \[\[ -e "\$APP_PATH" \|\| -L "\$APP_PATH" \]\]/);
@@ -496,7 +501,8 @@ test('macOS installer smoke test derives the app bundle name and refuses to over
 test('Linux installer smoke test refuses to remove a package that was already installed', () => {
   const install = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'brightdesk-private-runner', 'verify-private-install.sh'), 'utf8');
   assert.match(install, /dpkg-query -W -f='\$\{db:Status-Status\}' "\$PACKAGE_NAME"/);
-  assert.match(install, /already installed; refusing to replace or remove it/);
+  assert.match(install, /pre-existing package state; refusing to replace or remove it/);
+  assert.match(install, /case "\$INSTALLED_STATUS" in/);
   assert.match(install, /INSTALL_ATTEMPTED=0/);
   assert.match(install, /if \[\[ "\$INSTALL_ATTEMPTED" -eq 1 \]\]/);
 });
