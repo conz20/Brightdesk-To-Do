@@ -269,7 +269,7 @@ test('private installer diagnostics discard unknown paths and malformed library 
     stage: 'installer installation smoke test',
     exitCode: 127,
     log: [
-      'The Windows installer did not install Brightdesk.exe.',
+      'The Windows installer did not install the product executable.',
       'Missing system runtime libraries: C:\\private\\evil.dll, libvalid.so.1;SECRET, ../private.dll',
       'C:\\Users\\runner\\source\\app.js'
     ].join('\n')
