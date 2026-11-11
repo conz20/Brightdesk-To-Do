@@ -487,10 +487,10 @@ test('macOS installer smoke test derives the app bundle name and refuses to over
   assert.match(install, /PACKAGE_ID=.*build\?\.appId/);
   assert.match(install, /pkgutil --pkg-info "\$PACKAGE_ID"/);
   assert.match(install, /pkgutil --forget "\$PACKAGE_ID"/);
-  assert.match(install, /previous macOS smoke-test temporary path already exists/);
-  assert.match(install, /mkdir "\$MOUNT_DIR"/);
-  assert.match(install, /MOUNT_DIR=.*\$\$/);
-  assert.match(install, /DMG_APP=.*\$\$/);
+  assert.match(install, /WORK_DIR="\$\(mktemp -d "\$TEMP_BASE\/brightdesk-installer-smoke\.XXXXXX"\)"/);
+  assert.match(install, /MOUNT_DIR="\$WORK_DIR\/mount"/);
+  assert.match(install, /DMG_APP="\$WORK_DIR\/\$APP_BUNDLE_NAME"/);
+  assert.match(install, /trap cleanup_macos EXIT/);
   assert.match(install, /if \[\[ -e "\$APP_PATH" \|\| -L "\$APP_PATH" \]\]/);
   assert.match(install, /INSTALL_ATTEMPTED=0/);
   assert.match(install, /if \[\[ "\$INSTALL_ATTEMPTED" -eq 1 \]\]/);
@@ -505,4 +505,26 @@ test('Linux installer smoke test refuses to remove a package that was already in
   assert.match(install, /case "\$INSTALLED_STATUS" in/);
   assert.match(install, /INSTALL_ATTEMPTED=0/);
   assert.match(install, /if \[\[ "\$INSTALL_ATTEMPTED" -eq 1 \]\]/);
+});
+
+
+test('macOS installer diagnostics expose only safe bundle and receipt messages', () => {
+  const diagnostics = require('../scripts/brightdesk-private-runner/private-installer-diagnostics');
+  const output = diagnostics.formatPrivateInstallerFailure({
+    platform: 'mac',
+    stage: 'installer installation smoke test',
+    exitCode: 3,
+    log: [
+      'A Brightdesk installer receipt already exists; refusing to modify or forget it.',
+      '/Applications/Brightdesk Office Suite.app',
+      'SECRET_SOURCE_CONTENT'
+    ].join('\\n')
+  });
+  const runner = fs.readFileSync(runnerScript, 'utf8');
+
+  assert.match(output, /A Brightdesk installer receipt already exists/);
+  assert.ok(!output.includes('/Applications/'));
+  assert.ok(!output.includes('SECRET_SOURCE_CONTENT'));
+  assert.match(runner, /A Brightdesk installer receipt already exists; refusing to modify or forget it/);
+  assert.doesNotMatch(runner, /Brightdesk\\.app/);
 });
