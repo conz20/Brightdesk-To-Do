@@ -442,7 +442,7 @@ test('Windows installer diagnostics expose only the last bounded smoke-test stag
 
   assert.match(output, /Windows smoke test failed during application launch/);
   assert.ok(!output.includes('C:\\Users'));
-  assert.match(powershell, /Brightdesk Windows smoke test stage: installing/);
+  assert.match(powershell, /Brightdesk Windows smoke test stage: installer execution/);
   assert.match(powershell, /Brightdesk Windows smoke test stage: application launch/);
   assert.match(powershell, /Brightdesk Windows smoke test stage: uninstaller execution/);
 });
