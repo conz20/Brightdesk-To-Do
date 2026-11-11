@@ -44,12 +44,26 @@ case "$PLATFORM" in
     fi
 
     PACKAGE_NAME="$(dpkg-deb -f "$DEB_FILE" Package)"
+    if [[ ! "$PACKAGE_NAME" =~ ^[a-z0-9][a-z0-9+.-]*$ ]]; then
+      echo "Linux installer package has an invalid package identifier." >&2
+      exit 2
+    fi
+    INSTALLED_STATUS="$(dpkg-query -W -f='${db:Status-Status}' "$PACKAGE_NAME" 2>/dev/null || true)"
+    if [[ "$INSTALLED_STATUS" == "installed" ]]; then
+      echo "The Brightdesk Linux package is already installed; refusing to replace or remove it." >&2
+      exit 3
+    fi
+
+    INSTALL_ATTEMPTED=0
     cleanup_linux() {
-      sudo apt-get remove -y "$PACKAGE_NAME" >/dev/null 2>&1 || true
+      if [[ "$INSTALL_ATTEMPTED" -eq 1 ]]; then
+        sudo apt-get remove -y "$PACKAGE_NAME" >/dev/null 2>&1 || true
+      fi
     }
     trap cleanup_linux EXIT
 
     export DEBIAN_FRONTEND=noninteractive
+    INSTALL_ATTEMPTED=1
     printf 'yes\n' | bash "$INSTALL_HELPER"
     DESKTOP_FILE="$(dpkg-query -L "$PACKAGE_NAME" | grep -E '/usr/share/applications/[^/]+\.desktop$' | head -n 1 || true)"
     if [[ -z "$DESKTOP_FILE" || ! -f "$DESKTOP_FILE" ]]; then
@@ -77,6 +91,7 @@ case "$PLATFORM" in
       run_bounded_launch "$APP_BINARY" --no-sandbox
     fi
     sudo apt-get remove -y "$PACKAGE_NAME"
+    INSTALL_ATTEMPTED=0
     trap - EXIT
     ;;
   mac)
@@ -87,20 +102,34 @@ case "$PLATFORM" in
       exit 2
     fi
 
-    TEMP_ROOT="$RUNNER_TEMP"
-    MOUNT_DIR="$TEMP_ROOT/brightdesk-dmg-mount-$$"
-    DMG_APP="$TEMP_ROOT/Brightdesk-dmg-smoke-$$.app"
-    APP_PATH="/Applications/Brightdesk.app"
+    PRODUCT_NAME="$(node -e 'const p=require(process.argv[1]);process.stdout.write(String(p.build?.productName || ""))' "$PROJECT_DIR/package.json")"
+    if [[ -z "$PRODUCT_NAME" || ! "$PRODUCT_NAME" =~ ^[A-Za-z0-9][A-Za-z0-9\ ._-]*$ ]]; then
+      echo "macOS installer smoke test could not read a safe product name from package.json." >&2
+      exit 2
+    fi
+    APP_BUNDLE_NAME="${PRODUCT_NAME}.app"
+    TEMP_ROOT="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
+    MOUNT_DIR="$TEMP_ROOT/brightdesk-dmg-mount-$"
+    DMG_APP="$TEMP_ROOT/brightdesk-dmg-smoke-$.app"
+    APP_PATH="/Applications/$APP_BUNDLE_NAME"
+    if [[ -e "$APP_PATH" || -L "$APP_PATH" ]]; then
+      echo "A Brightdesk installation already exists at $APP_PATH; refusing to overwrite or remove it." >&2
+      exit 3
+    fi
+
+    INSTALL_ATTEMPTED=0
     mkdir -p "$MOUNT_DIR"
     cleanup_macos() {
       hdiutil detach "$MOUNT_DIR" -quiet >/dev/null 2>&1 || true
-      sudo rm -rf "$APP_PATH" >/dev/null 2>&1 || true
+      if [[ "$INSTALL_ATTEMPTED" -eq 1 ]]; then
+        sudo rm -rf -- "$APP_PATH" >/dev/null 2>&1 || true
+      fi
       rm -rf "$MOUNT_DIR" "$DMG_APP"
     }
     trap cleanup_macos EXIT
 
     hdiutil attach -quiet -nobrowse -mountpoint "$MOUNT_DIR" "$DMG_FILE"
-    DMG_APP_SOURCE="$(find "$MOUNT_DIR" -maxdepth 3 -name 'Brightdesk.app' -type d -print -quit)"
+    DMG_APP_SOURCE="$(find "$MOUNT_DIR" -maxdepth 3 -name "$APP_BUNDLE_NAME" -type d -print -quit)"
     if [[ -z "$DMG_APP_SOURCE" ]]; then
       echo "The macOS DMG did not contain Brightdesk.app." >&2
       exit 1
@@ -115,9 +144,10 @@ case "$PLATFORM" in
     run_bounded_launch "$DMG_APP/Contents/MacOS/$DMG_EXECUTABLE"
     hdiutil detach "$MOUNT_DIR" -quiet
 
+    INSTALL_ATTEMPTED=1
     sudo installer -allowUntrusted -pkg "$PKG_FILE" -target / -agreeToLicense
-    if [[ ! -d "$APP_PATH" ]]; then
-      echo "The macOS PKG completed without installing Brightdesk.app." >&2
+    if [[ ! -d "$APP_PATH" || -L "$APP_PATH" ]]; then
+      echo "The macOS PKG completed without installing $APP_BUNDLE_NAME." >&2
       exit 1
     fi
     if [[ ! -f "$APP_PATH/Contents/Resources/app.asar.unpacked/native/brightdesk_engine.node" ]]; then
@@ -126,7 +156,8 @@ case "$PLATFORM" in
     fi
     APP_EXECUTABLE="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP_PATH/Contents/Info.plist")"
     run_bounded_launch "$APP_PATH/Contents/MacOS/$APP_EXECUTABLE"
-    sudo rm -rf "$APP_PATH"
+    sudo rm -rf -- "$APP_PATH"
+    INSTALL_ATTEMPTED=0
     rm -rf "$MOUNT_DIR" "$DMG_APP"
     trap - EXIT
     ;;
