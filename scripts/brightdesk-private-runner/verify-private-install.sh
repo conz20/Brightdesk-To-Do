@@ -121,7 +121,7 @@ case "$PLATFORM" in
     DMG_APP="$TEMP_ROOT/brightdesk-dmg-smoke-$.app"
     APP_PATH="/Applications/$APP_BUNDLE_NAME"
     if [[ -e "$APP_PATH" || -L "$APP_PATH" ]]; then
-      echo "A Brightdesk installation already exists at $APP_PATH; refusing to overwrite or remove it." >&2
+      echo "A Brightdesk installation already exists; refusing to overwrite or remove it." >&2
       exit 3
     fi
     if pkgutil --pkg-info "$PACKAGE_ID" >/dev/null 2>&1; then
@@ -148,7 +148,7 @@ case "$PLATFORM" in
     hdiutil attach -quiet -nobrowse -mountpoint "$MOUNT_DIR" "$DMG_FILE"
     DMG_APP_SOURCE="$(find "$MOUNT_DIR" -maxdepth 3 -name "$APP_BUNDLE_NAME" -type d -print -quit)"
     if [[ -z "$DMG_APP_SOURCE" ]]; then
-      echo "The macOS DMG did not contain $APP_BUNDLE_NAME." >&2
+      echo "The macOS DMG did not contain the expected product bundle." >&2
       exit 1
     fi
     ditto "$DMG_APP_SOURCE" "$DMG_APP"
@@ -164,7 +164,7 @@ case "$PLATFORM" in
     INSTALL_ATTEMPTED=1
     sudo installer -allowUntrusted -pkg "$PKG_FILE" -target / -agreeToLicense
     if [[ ! -d "$APP_PATH" || -L "$APP_PATH" ]]; then
-      echo "The macOS PKG completed without installing $APP_BUNDLE_NAME." >&2
+      echo "The macOS PKG completed without installing the expected product bundle." >&2
       exit 1
     fi
     if [[ ! -f "$APP_PATH/Contents/Resources/app.asar.unpacked/native/brightdesk_engine.node" ]]; then
