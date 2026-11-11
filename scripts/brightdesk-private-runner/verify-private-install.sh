@@ -49,10 +49,13 @@ case "$PLATFORM" in
       exit 2
     fi
     INSTALLED_STATUS="$(dpkg-query -W -f='${db:Status-Status}' "$PACKAGE_NAME" 2>/dev/null || true)"
-    if [[ "$INSTALLED_STATUS" == "installed" ]]; then
-      echo "The Brightdesk Linux package is already installed; refusing to replace or remove it." >&2
-      exit 3
-    fi
+    case "$INSTALLED_STATUS" in
+      ""|not-installed) ;;
+      *)
+        echo "The Brightdesk Linux package has pre-existing package state; refusing to replace or remove it." >&2
+        exit 3
+        ;;
+    esac
 
     INSTALL_ATTEMPTED=0
     cleanup_linux() {
@@ -108,23 +111,37 @@ case "$PLATFORM" in
       exit 2
     fi
     APP_BUNDLE_NAME="${PRODUCT_NAME}.app"
+    PACKAGE_ID="$(node -e 'const p=require(process.argv[1]);process.stdout.write(String(p.build?.appId || ""))' "$PROJECT_DIR/package.json")"
+    if [[ -z "$PACKAGE_ID" || ! "$PACKAGE_ID" =~ ^[A-Za-z0-9.-]+$ ]]; then
+      echo "macOS installer smoke test could not read a safe package identifier from package.json." >&2
+      exit 2
+    fi
     TEMP_ROOT="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
-    MOUNT_DIR="$TEMP_ROOT/brightdesk-dmg-mount-$$"
-    DMG_APP="$TEMP_ROOT/brightdesk-dmg-smoke-$$.app"
+    MOUNT_DIR="$TEMP_ROOT/brightdesk-dmg-mount-$"
+    DMG_APP="$TEMP_ROOT/brightdesk-dmg-smoke-$.app"
     APP_PATH="/Applications/$APP_BUNDLE_NAME"
     if [[ -e "$APP_PATH" || -L "$APP_PATH" ]]; then
       echo "A Brightdesk installation already exists at $APP_PATH; refusing to overwrite or remove it." >&2
       exit 3
     fi
+    if pkgutil --pkg-info "$PACKAGE_ID" >/dev/null 2>&1; then
+      echo "A Brightdesk installer receipt already exists; refusing to modify or forget it." >&2
+      exit 3
+    fi
+    if [[ -e "$MOUNT_DIR" || -L "$MOUNT_DIR" || -e "$DMG_APP" || -L "$DMG_APP" ]]; then
+      echo "A previous macOS smoke-test temporary path already exists; refusing to reuse or remove it." >&2
+      exit 3
+    fi
 
     INSTALL_ATTEMPTED=0
-    mkdir -p "$MOUNT_DIR"
+    mkdir "$MOUNT_DIR"
     cleanup_macos() {
       hdiutil detach "$MOUNT_DIR" -quiet >/dev/null 2>&1 || true
       if [[ "$INSTALL_ATTEMPTED" -eq 1 ]]; then
         sudo rm -rf -- "$APP_PATH" >/dev/null 2>&1 || true
+        sudo pkgutil --forget "$PACKAGE_ID" >/dev/null 2>&1 || true
       fi
-      rm -rf "$MOUNT_DIR" "$DMG_APP"
+      rm -rf -- "$MOUNT_DIR" "$DMG_APP"
     }
     trap cleanup_macos EXIT
 
@@ -157,8 +174,9 @@ case "$PLATFORM" in
     APP_EXECUTABLE="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP_PATH/Contents/Info.plist")"
     run_bounded_launch "$APP_PATH/Contents/MacOS/$APP_EXECUTABLE"
     sudo rm -rf -- "$APP_PATH"
+    sudo pkgutil --forget "$PACKAGE_ID"
     INSTALL_ATTEMPTED=0
-    rm -rf "$MOUNT_DIR" "$DMG_APP"
+    rm -rf -- "$MOUNT_DIR" "$DMG_APP"
     trap - EXIT
     ;;
   win)
