@@ -109,8 +109,8 @@ case "$PLATFORM" in
     fi
     APP_BUNDLE_NAME="${PRODUCT_NAME}.app"
     TEMP_ROOT="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
-    MOUNT_DIR="$TEMP_ROOT/brightdesk-dmg-mount-$"
-    DMG_APP="$TEMP_ROOT/brightdesk-dmg-smoke-$.app"
+    MOUNT_DIR="$TEMP_ROOT/brightdesk-dmg-mount-$$"
+    DMG_APP="$TEMP_ROOT/brightdesk-dmg-smoke-$$.app"
     APP_PATH="/Applications/$APP_BUNDLE_NAME"
     if [[ -e "$APP_PATH" || -L "$APP_PATH" ]]; then
       echo "A Brightdesk installation already exists at $APP_PATH; refusing to overwrite or remove it." >&2
