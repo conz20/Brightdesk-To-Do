@@ -465,3 +465,36 @@ test('native installer smoke tests bound application launch time and clean up te
   assert.match(powershell, /taskkill\.exe \/PID/);
   assert.ok(!powershell.includes("& $appPath --version"));
 });
+
+
+test('Windows installer smoke test derives names from the checked-out product manifest and uses a unique temporary directory', () => {
+  const windows = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'brightdesk-private-runner', 'verify-private-install.ps1'), 'utf8');
+  assert.match(windows, /build\.win\.artifactName/);
+  assert.match(windows, /\.Replace\('\$\{version\}'/);
+  assert.match(windows, /\.Replace\('\$\{arch\}'/);
+  assert.match(windows, /\.Replace\('\$\{ext\}'/);
+  assert.match(windows, /build\.productName/);
+  assert.match(windows, /nsis\.uninstallerName/);
+  assert.match(windows, /\[guid\]::NewGuid\(\)/);
+  assert.doesNotMatch(windows, /Brightdesk-Setup-\$\(\$package\.version\)-x64\.exe/);
+  assert.doesNotMatch(windows, /Join-Path \$env:RUNNER_TEMP 'brightdesk-install-smoke'/);
+});
+
+test('macOS installer smoke test derives the app bundle name and refuses to overwrite an existing installation', () => {
+  const install = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'brightdesk-private-runner', 'verify-private-install.sh'), 'utf8');
+  assert.match(install, /PRODUCT_NAME=.*package\.json/);
+  assert.match(install, /APP_BUNDLE_NAME="\$\{PRODUCT_NAME\}\.app"/);
+  assert.match(install, /if \[\[ -e "\$APP_PATH" \|\| -L "\$APP_PATH" \]\]/);
+  assert.match(install, /INSTALL_ATTEMPTED=0/);
+  assert.match(install, /if \[\[ "\$INSTALL_ATTEMPTED" -eq 1 \]\]/);
+  assert.doesNotMatch(install, /APP_PATH="\/Applications\/Brightdesk\.app"/);
+  assert.doesNotMatch(install, /-name 'Brightdesk\.app'/);
+});
+
+test('Linux installer smoke test refuses to remove a package that was already installed', () => {
+  const install = fs.readFileSync(path.join(__dirname, '..', 'scripts', 'brightdesk-private-runner', 'verify-private-install.sh'), 'utf8');
+  assert.match(install, /dpkg-query -W -f='\$\{db:Status-Status\}' "\$PACKAGE_NAME"/);
+  assert.match(install, /already installed; refusing to replace or remove it/);
+  assert.match(install, /INSTALL_ATTEMPTED=0/);
+  assert.match(install, /if \[\[ "\$INSTALL_ATTEMPTED" -eq 1 \]\]/);
+});
