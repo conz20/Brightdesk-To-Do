@@ -116,12 +116,6 @@ case "$PLATFORM" in
       echo "macOS installer smoke test could not read a safe package identifier from package.json." >&2
       exit 2
     fi
-    TEMP_ROOT="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
-    TEMP_BASE="${TEMP_ROOT%/}"
-    if [[ -z "$TEMP_BASE" ]]; then TEMP_BASE="/tmp"; fi
-    WORK_DIR="$(mktemp -d "$TEMP_BASE/brightdesk-installer-smoke.XXXXXX")"
-    MOUNT_DIR="$WORK_DIR/mount"
-    DMG_APP="$WORK_DIR/$APP_BUNDLE_NAME"
     APP_PATH="/Applications/$APP_BUNDLE_NAME"
     if [[ -e "$APP_PATH" || -L "$APP_PATH" ]]; then
       echo "A Brightdesk installation already exists; refusing to overwrite or remove it." >&2
@@ -131,8 +125,14 @@ case "$PLATFORM" in
       echo "A Brightdesk installer receipt already exists; refusing to modify or forget it." >&2
       exit 3
     fi
+
+    TEMP_ROOT="${RUNNER_TEMP:-${TMPDIR:-/tmp}}"
+    TEMP_BASE="${TEMP_ROOT%/}"
+    if [[ -z "$TEMP_BASE" ]]; then TEMP_BASE="/tmp"; fi
+    WORK_DIR="$(mktemp -d "$TEMP_BASE/brightdesk-installer-smoke.XXXXXX")"
+    MOUNT_DIR="$WORK_DIR/mount"
+    DMG_APP="$WORK_DIR/$APP_BUNDLE_NAME"
     INSTALL_ATTEMPTED=0
-    mkdir "$MOUNT_DIR"
     cleanup_macos() {
       hdiutil detach "$MOUNT_DIR" -quiet >/dev/null 2>&1 || true
       if [[ "$INSTALL_ATTEMPTED" -eq 1 ]]; then
@@ -142,6 +142,7 @@ case "$PLATFORM" in
       rm -rf -- "$WORK_DIR"
     }
     trap cleanup_macos EXIT
+    mkdir "$MOUNT_DIR"
 
     hdiutil attach -quiet -nobrowse -mountpoint "$MOUNT_DIR" "$DMG_FILE"
     DMG_APP_SOURCE="$(find "$MOUNT_DIR" -maxdepth 3 -name "$APP_BUNDLE_NAME" -type d -print -quit)"
