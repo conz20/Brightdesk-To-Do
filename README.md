@@ -116,3 +116,6 @@ The Electron main process validates the configured product ID against the shared
 ## Dependency updates
 
 Brightdesk checks npm packages, Rust Cargo dependencies and GitHub Actions for stable updates weekly. Update proposals are reviewed and tested before acceptance; they are not merged or published automatically.
+
+
+Development and CI use the exact Node.js 24.22.3 LTS runtime.
