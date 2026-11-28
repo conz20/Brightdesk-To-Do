@@ -1,7 +1,7 @@
 # Brightdesk To Do project instructions
 
 ## Runtime
-Use exactly Node.js **24.22.2 LTS**. Keep the version aligned across package.json, package-lock.json, .node-version, .nvmrc, .npmrc, the dev container and CI.
+Use exactly Node.js **24.22.3 LTS**. Keep the version aligned across package.json, package-lock.json, .node-version, .nvmrc, .npmrc, the dev container and CI.
 
 ## Product identity
 This repository builds **Brightdesk To Do** only. Use this exact name in customer-facing text, desktop installer names, release titles and documentation. The product opens directly into its own workspace; product switching is disabled.
