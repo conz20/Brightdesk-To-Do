@@ -118,3 +118,6 @@ The Electron main process validates the configured product ID against the shared
 Brightdesk To Do source code is licensed under the standard MIT License in [LICENSE](LICENSE). MIT permits use, modification and redistribution of covered code, including commercial use and sale, provided the required notices are retained. Official Brightdesk downloads remain free of charge; that distribution policy does not narrow the MIT rights already granted.
 
 MIT does not grant a general right to present a modified build as an official Brightdesk release or to use Brightdesk branding misleadingly. Third-party dependencies, fonts and other bundled resources retain their own terms; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The portfolio-wide [licensing and brand standard](https://github.com/conz20/Brightdesk-suite/blob/main/docs/LICENSING_AND_BRAND_STANDARD.md) and [official release identity policy](https://github.com/conz20/Brightdesk-suite/blob/main/BRAND-AND-RELEASE-IDENTITY.md) explain those boundaries.
+
+
+This quality workflow does not use a private runner. GitHub-hosted Ubuntu is the only supported CI runner for this product's routine checks.
