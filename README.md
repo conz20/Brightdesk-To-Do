@@ -112,3 +112,10 @@ The helper loads from the installed product before `src/app.js`. It does not dow
 ## Application identity
 
 The Electron main process validates the configured product ID against the shared ten-product catalogue exported by `src/desktop-downloads.js`. The startup import is covered by `tests/main-product-catalog.test.js`, which guards the approved product list so unsupported IDs cannot enter the product launch path.
+
+## Dependency updates
+
+Brightdesk checks npm packages, Rust Cargo dependencies and GitHub Actions for stable updates weekly. Update proposals are reviewed and tested before acceptance; they are not merged or published automatically.
+
+
+Development and CI use the exact Node.js 24.22.3 LTS runtime.
