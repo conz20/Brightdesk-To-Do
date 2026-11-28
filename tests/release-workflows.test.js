@@ -22,7 +22,7 @@ test('Dependabot checks npm dependencies and GitHub Actions weekly', () => {
 test('scheduled dependency audit prepares and verifies a lockfile before blocking high severity vulnerabilities', () => {
   const workflow = read('.github/workflows/security-audit.yml');
   assert.match(workflow, /cron:/);
-  assert.match(workflow, /node-version: 24\.22\.2/);
+  assert.match(workflow, /node-version: 24\.22\.3/);
   assert.match(workflow, /npm run lock:prepare/);
   assert.match(workflow, /npm run lock:verify/);
   assert.match(workflow, /npm ci --no-audit --no-fund/);
@@ -37,7 +37,7 @@ test('release workflow builds and verifies all three desktop platforms', () => {
   for (const command of ['dist:linux', 'dist:win', 'dist:mac', 'release:verify:linux', 'release:verify:win', 'release:verify:mac']) {
     assert.ok(workflow.includes(command), `workflow includes ${command}`);
   }
-  assert.match(workflow, /node-version: 24\.22\.2/);
+  assert.match(workflow, /node-version: 24\.22\.3/);
   assert.match(workflow, /npm run lock:prepare/);
   assert.match(workflow, /npm run lock:verify/);
   assert.match(workflow, /brightdesk-dependency-lock/);
@@ -98,12 +98,12 @@ test('platform release artifacts remain in separate folders and release lock met
 
 test('Node.js runtime is pinned consistently to the current 24 LTS patch', () => {
   const manifest = JSON.parse(read('package.json'));
-  assert.equal(manifest.engines.node, '24.22.2');
-  assert.equal(read('.nvmrc').trim(), '24.22.2');
-  assert.equal(read('.node-version').trim(), '24.22.2');
-  assert.match(read('.devcontainer/Dockerfile'), /^FROM node:24\.22\.2-bookworm/m);
-  assert.match(read('.github/workflows/build-release.yml'), /node-version: 24\.22\.2/);
-  assert.match(read('.github/workflows/security-audit.yml'), /node-version: 24\.22\.2/);
+  assert.equal(manifest.engines.node, '24.22.3');
+  assert.equal(read('.nvmrc').trim(), '24.22.3');
+  assert.equal(read('.node-version').trim(), '24.22.3');
+  assert.match(read('.devcontainer/Dockerfile'), /^FROM node:24\.22\.3-bookworm/m);
+  assert.match(read('.github/workflows/build-release.yml'), /node-version: 24\.22\.3/);
+  assert.match(read('.github/workflows/security-audit.yml'), /node-version: 24\.22\.3/);
 });
 
 test('individual app installer builds explicitly disable implicit publishing', () => {
