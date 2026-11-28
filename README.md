@@ -85,9 +85,9 @@ The root README is maintained alongside the product, not as an end-of-project ta
 
 Once installed, this product uses the internet only to check for, download and install official Brightdesk updates. The product does not provide separate in-product installer downloads, customer accounts, passwords, profiles, subscriptions, cloud storage or online services. Normal product work remains local and available offline. Initial installer distribution takes place outside the running product. Spelling checks run locally. Already-installed, integrity-verified dictionaries remain available offline. Entries that are not included in this build are catalogue information only and cannot be downloaded in-product. Future dictionary pack discovery, download and updates must use verified official Brightdesk resources; automatic hybrid fallback and the complete pack catalogue are still pending for this product.
 
-## Private CI runner
+## GitHub-hosted CI
 
-Pull-request product tests and README checks run on Brightdesk's private macOS ARM64 runner. Routine pull-request verification does not use GitHub-hosted paid runners. Installer matrix builds and release publishing are separate manual workflow actions and are not run by pull-request checks.
+Pull-request product tests and README checks run on GitHub-hosted Ubuntu. The workflow uses the pinned Node.js 24.22.2 and Rust 1.99.1 toolchains, builds and tests the native engine, runs product tests and release preflight, and pins third-party Actions to immutable commit SHAs. No self-hosted runner, personal computer or paid overage is permitted.
 
 
 ## Installer and platform verification
@@ -118,3 +118,6 @@ The Electron main process validates the configured product ID against the shared
 Brightdesk To Do source code is licensed under the standard MIT License in [LICENSE](LICENSE). MIT permits use, modification and redistribution of covered code, including commercial use and sale, provided the required notices are retained. Official Brightdesk downloads remain free of charge; that distribution policy does not narrow the MIT rights already granted.
 
 MIT does not grant a general right to present a modified build as an official Brightdesk release or to use Brightdesk branding misleadingly. Third-party dependencies, fonts and other bundled resources retain their own terms; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The portfolio-wide [licensing and brand standard](https://github.com/conz20/Brightdesk-suite/blob/main/docs/LICENSING_AND_BRAND_STANDARD.md) and [official release identity policy](https://github.com/conz20/Brightdesk-suite/blob/main/BRAND-AND-RELEASE-IDENTITY.md) explain those boundaries.
+
+
+This quality workflow does not use a private runner. GitHub-hosted Ubuntu is the only supported CI runner for this product's routine checks.
